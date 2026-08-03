@@ -140,7 +140,7 @@ commands =
 A list of DX Cluster filter and setup commands that are sent automatically after a successful login.
 
 Each command must be placed on a separate line.
-
+---
 
 ## 4. The Main Window
 
