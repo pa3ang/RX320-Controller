@@ -140,6 +140,7 @@ commands =
 A list of DX Cluster filter and setup commands that are sent automatically after a successful login.
 
 Each command must be placed on a separate line.
+
 ---
 
 ## 4. The Main Window
@@ -171,6 +172,7 @@ The window title bar shows the program version and the connected **RX320 receive
 | Action | Function |
 |---|---|
 | **Double-click (left mouse button) on a spot** | Tunes the receiver to the spot frequency and automatically selects the appropriate mode from the bandplan. |
+
 ---
 
 
