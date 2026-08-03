@@ -5,23 +5,26 @@
 
 ## 1. Introduction
 
-The RX320 Control Program is a Python/Tkinter desktop application for controlling RX320 receiver.
+The **RX320 Control Program** is a Python/Tkinter desktop application for controlling the **Ten-Tec RX320** receiver.
 
-The RX320 is controlled via an RS232 port. There is a limited set of commands and the wanted receive frequency needs to be reworked into tuning factors.
+The RX320 is controlled via an RS-232 serial port. It supports only a limited command set, and the desired receive frequency must be converted into the appropriate tuning factors (see the separate document in the `doc` folder of this repository).
 
-see seperate document in the doc folder of this repository
+The program performs all required calculations to determine the correct tuning values and also applies a user-defined `freq_offset`, allowing accurate frequency calibration after the receiver has been calibrated with an external source.
 
+> **Note:** Due to component aging, the RX320's frequency may drift over time. The `freq_offset` setting can be used to compensate for this drift after calibration.
 
-### Main features
-- **Frequency, Mode, Filter and AGC speed**
-- **Direct Frequency** input and 2 buttons for - + 1 KHz (and - + 100 Hz w/ right mouse click)
-- **Band** (being a selection of Amateur Band with predefined frequency)
-- 4 **fixed memory** buttons
-- 2 **drop down** menus with additional frequency / modulation sets
+### Main Features
+
+- **Frequency, Mode, Filter, and AGC** control
+- **Direct Frequency** entry with tuning buttons for **±1 kHz** and **±100 Hz** 
+- **Band** selection with predefined Amateur Radio band frequencies
+- **2 Quick Memory** buttons, functioning as temporary memory locations
+- **4 Fixed Memory** buttons
+- **2 Drop-down** menus with additional frequency/mode presets
 - **S-Meter**
-- **DX Cluster** window — shows DX spots with click-to-tune
+- **DX Cluster** window with click-to-tune functionality
 
-
+> **Note:** The RX320 only supports reading the **signal strength** from the receiver. Frequency, Mode, Filter, and AGC settings cannot be read back, so the application keeps track of their current values internally.
 ---
 
 ## 2. Requirements
@@ -39,18 +42,33 @@ see seperate document in the doc folder of this repository
 | `rx320.ini` | All user-specific settings |
 | `rx320.py` | RX320 communication class |
 | `dxcluster.py` | DX Cluster network class |
-
+| `rx320.png` | Ten-Tec logo |
 ---
 
 ## 3. Configuration file: `rx320.ini`
 
 The `.ini` file is divided into sections. All of them are required.
 
-### `[Serial]`
-```
+### `[Radio]`
+
+```ini
 port = /dev/ttyUSB0
+freq_offset_low = -50
+freq_offset_high = -300
+cw_pitch = 700
+volume = 30
+start_frequency = 7073000
 ```
-The serial port your transceiver is connected to.
+
+| Parameter | Description |
+|-----------|-------------|
+| `port` | Serial port to which the RX320 is connected. Under Linux this is typically `/dev/ttyUSB0`. |
+| `freq_offset_low` | Frequency calibration offset (Hz) measured at 100 kHz. |
+| `freq_offset_high` | Frequency calibration offset (Hz) measured at 30 MHz. |
+| `cw_pitch` | CW audio pitch in Hz. This value is used when tuning to CW signals. |
+| `volume` | Initial receiver volume (0–63). |
+| `start_frequency` | Frequency in Hz that is set when the program starts. |
+---
 
 ### `[Messages]`
 ```
