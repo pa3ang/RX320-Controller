@@ -9,7 +9,7 @@ The **RX320 Control Program** is a Python/Tkinter desktop application for contro
 
 The RX320 is controlled via an RS-232 serial port. It supports only a limited command set, and the desired receive frequency must be converted into the appropriate tuning factors (see the separate document in the `doc` folder of this repository).
 
-The program performs all required calculations to determine the correct tuning values and also applies user-defined `freq_offset` values, allowing accurate frequency calibration after the receiver has been calibrated against an external frequency source.
+The program performs all required calculations to determine the correct tuning values and also applies user-defined `freq_offset` values, allowing accurate frequency after the receiver has been calibrated against an external frequency source.
 
 > **Note:** Due to component aging, the RX320's frequency may drift over time. The `freq_offset` setting can be used to compensate for this drift after calibration.
 
