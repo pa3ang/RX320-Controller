@@ -9,14 +9,14 @@ The **RX320 Control Program** is a Python/Tkinter desktop application for contro
 
 The RX320 is controlled via an RS-232 serial port. It supports only a limited command set, and the desired receive frequency must be converted into the appropriate tuning factors (see the separate document in the `doc` folder of this repository).
 
-The program performs all required calculations to determine the correct tuning values and also applies a user-defined `freq_offset`, allowing accurate frequency calibration after the receiver has been calibrated with an external source.
+The program performs all required calculations to determine the correct tuning values and also applies user-defined `freq_offset` values, allowing accurate frequency calibration after the receiver has been calibrated against an external frequency source.
 
 > **Note:** Due to component aging, the RX320's frequency may drift over time. The `freq_offset` setting can be used to compensate for this drift after calibration.
 
 ### Main Features
 
 - **Frequency, Mode, Filter, and AGC** control
-- **Direct Frequency** entry with tuning buttons for **±1 kHz** and **±100 Hz** 
+- **Direct Frequency** entry with tuning buttons for **±1 kHz** and **±100 Hz**
 - **Band** selection with predefined Amateur Radio band frequencies
 - **2 Quick Memory** buttons, functioning as temporary memory locations
 - **4 Fixed Memory** buttons
@@ -25,17 +25,18 @@ The program performs all required calculations to determine the correct tuning v
 - **DX Cluster** window with click-to-tune functionality
 
 > **Note:** The RX320 only supports reading the **signal strength** from the receiver. Frequency, Mode, Filter, and AGC settings cannot be read back, so the application keeps track of their current values internally.
+
 ---
 
 ## 2. Requirements
 
-- Python 3 with Tkinter (already included in most Python installations)
-- A serial connection to the transceiver (USB /RS232 cable)
+- Python 3 with Tkinter (included with most Python installations)
+- A serial connection to the receiver (USB/RS-232 cable)
 - Internet access for the DX Cluster feature
 
-> **Note:** the Tkinter geometrics is tailored for a 7"TFT screen.
+> **Note:** The Tkinter layout is optimized for a 7" TFT display.
 
-### Required files
+### Required Files
 
 | File | Purpose |
 |---|---|
@@ -43,11 +44,12 @@ The program performs all required calculations to determine the correct tuning v
 | `rx320.py` | RX320 communication class |
 | `dxcluster.py` | DX Cluster network class |
 | `rx320.png` | Ten-Tec logo |
+
 ---
 
-## 3. Configuration file: `rx320.ini`
+## 3. Configuration File: `rx320.ini`
 
-The `.ini` file is divided into sections. All of them are required.
+The `.ini` file is divided into several sections. All sections are required.
 
 ### `[Radio]`
 
@@ -68,84 +70,103 @@ start_frequency = 7073000
 | `cw_pitch` | CW audio pitch in Hz. This value is used when tuning to CW signals. |
 | `volume` | Initial receiver volume (0–63). |
 | `start_frequency` | Frequency in Hz that is set when the program starts. |
+
 ---
 
-### `[Messages]`
-```
-callsign  = PA3ANG
-message_1 = R UR 55N 55N OP JOHAN 73
-literal_1 = REPORT
-message_2 = TU
-literal_2 = TU
-cq        = CQ CQ DE PA3ANG PA3ANG K
-```
-- `callsign` — used on the first CW button, and also for RBN searches and DX Cluster login.
-- `message_1` / `message_2` — the actual CW text sent by buttons 2 and 3.
-- `literal_1` / `literal_2` — the short text shown **on** those buttons (the full message shows as a tooltip on hover).
-- `cq` — text sent by the CQ button.
-
 ### `[Memories]`
+
+```ini
+fixed = 3630000,LSB;7073000,LSB;14292000,USB;6640000,LSB
+extra_1 = 3622000,LSB;3692000,LSB;7060000,LSB;14060000,CW;14345000,USB;28450000,USB;27555000,USB
+extra_2 = 648000,AM;819000,AM;6085000,AM;6130000,AM;5450000,USB;5505000,USB;6622000,USB;13264000,USB
 ```
-fixed = 3630,LSB;7073,LSB;14060,CW;14292,USB
-extra_1 = 3573,CW;10136,DIGI;
-extra_2 = ...
-```
-Each entry is `frequency(kHz),mode`, separated by semicolons.
-- `fixed` — fills the 4 fixed memory buttons (in order).
-- `extra` — fills the **Extra Memories** drop-down menu, useful for additional frequencies that don't need a dedicated button.
+
+Each entry is defined as `frequency(Hz),mode`, with entries separated by semicolons (`;`).
+
+- `fixed` — Fills the four fixed memory buttons (in order).
+- `extra_1` — Fills the **Extra Memories** drop-down menu, labeled **HAM FREQUENCIES**, for additional amateur radio frequencies that do not require a dedicated button.
+- `extra_2` — Fills the **Extra Memories** drop-down menu, labeled **BROADCAST**, for broadcast and utility frequencies.
+
+---
 
 ### `[Bandplan]`
-```
+
+```ini
 80m = 3500,3600,CW;3600,3800,LSB
 40m = 7000,7040,CW;7040,7200,LSB
 ...
 ```
-Defines band edges and the default mode to use in each frequency sub-range. This is used to:
-- Populate the **Band** drop-down (only bands within your model's range are listed)
-- Automatically determine the mode when tuning to a DX Cluster spot
-- Look up the band name when logging a QSO to Cloudlog
+
+Defines the amateur radio band segments, their frequency ranges, and the default operating mode for each sub-range.
+
+The bandplan is used to:
+
+- Populate the **Band** drop-down menu (only bands within the frequency range of the selected receiver model are shown)
+- Automatically select the appropriate mode when tuning to a **DX Cluster** spot
+- Determine the band name when logging a QSO to **Cloudlog**
+
+All frequencies in the bandplan are specified in **kHz**.
+
+---
 
 ### `[DXCluster]`
-```
-host = 	dxcluster.iu1bow.it
+
+```ini
+host = dxcluster.iu1bow.it
 port = 7300
 call = NOCALL
 ```
-Your preferred DX Cluster server and alternatives, plus the callsign used to log in.
+
+Defines the preferred **DX Cluster** server and the callsign used for login.
+
+| Parameter | Description |
+|-----------|-------------|
+| `host` | DX Cluster server hostname or IP address |
+| `port` | Telnet port used by the DX Cluster server |
+| `call` | Callsign used during the login procedure |
+
+---
 
 ### `[Filters]`
-```
+
+```ini
 commands =
     clear/spots all
     accept/spots on hf and by_zone 14,15,16
 ```
-A list of cluster filter/setup commands (one per line) sent automatically after login.
 
----
+A list of DX Cluster filter and setup commands that are sent automatically after a successful login.
+
+Each command must be placed on a separate line.
+
 
 ## 4. The Main Window
 
-The window title bar shows the program version and your configured QMX model.
+The window title bar shows the program version and the connected **RX320 receiver**.
 
-### Top row
+### Left Part
+
 | Control | Function |
 |---|---|
-| **Frequency field** | Shows/sets the current VFO frequency in kHz. Type a value and press **Enter** to tune. |
-| **Mode drop-down** | Select LSB, USB, CW, AM, or DIGI. |
-| **Band drop-down** | Select a band; automatically tunes to that band using its default sub-range. |
-| **S/Power Meter** | Shows receive signal in S points or RF power in Watt |
+| **S-Meter** | Displays the received signal strength in calibrated S-units. |
+| **Frequency field** | Displays the current VFO frequency in kHz. Enter a value and press **Enter** to tune. |
+| **4 up/down buttons** | Adjust the frequency by **±1 kHz** or **±100 Hz** depending on the selected tuning step. |
 
-### Center row
+### Right Part
 
-
-### Memory row
-| **Four buttons** | One button per entry in `[Memories] fixed`. Each button is color-coded by mode (see `[ModeColors]`) and, when clicked, instantly sets the transceiver to that frequency and mode. |
-| **Extra memories** | In a drop-down menu, configured under `[Memories] extra` and colored by mode as well. |
-
+| Control | Function |
+|---|---|
+| **Four buttons** | Drop-down menus to control **Band, Mode, Filter, and AGC**. |
+| **Two Quick Memory buttons** | The **QM1** and **QM2** buttons act as temporary memory locations. If empty, click to store the current receiver settings. Click again to recall the settings. Right-click to clear the memory. |
+| **Four Fixed Memory buttons** | Predefined memory locations. Click a button to tune the receiver to the stored frequency and mode. |
+| **Two Extra Memories menus** | Drop-down menus containing additional frequency/mode presets: **HAM FREQUENCIES** and **BROADCAST**. |
+| **Audio Slider** | Located on the far right and used to adjust the receiver volume. |
 
 ### DX Cluster Window
-| **Double-click (left)** a spot | Tunes the receiver to that spot's frequency and sets the correct mode from the bandplan. |
 
+| Action | Function |
+|---|---|
+| **Double-click (left mouse button) on a spot** | Tunes the receiver to the spot frequency and automatically selects the appropriate mode from the bandplan. |
 ---
 
 
@@ -153,10 +174,10 @@ The window title bar shows the program version and your configured QMX model.
 
 | Symptom | Likely cause |
 |---|---|
-| Program won't start / crashes immediately | `rx320.ini` missing, malformed, or missing a required section |
-| No frequency/mode updates from the radio | Wrong serial port in `[Serial]`, or cable/driver issue |
-| No DX spots appear | Check `[DXCluster]` host, port, callsign and your internet connection |
-| Band drop-down is empty or missing bands | Check that `[Bandplan]` entries fall within your configured QMX model's frequency range |
+| Program won't start / crashes immediately | `rx320.ini` is missing, malformed, or missing a required section. |
+| No frequency or mode updates from the receiver | Incorrect serial port in `[Radio]`, or a cable/driver issue. |
+| No DX spots appear | Check the `[DXCluster]` host, port, callsign, and your internet connection. |
+| Band drop-down is empty or missing bands | Check that `[Bandplan]` entries are within the frequency range supported by the RX320. |
 
 ---
 
@@ -164,9 +185,10 @@ The window title bar shows the program version and your configured QMX model.
 
 ```
 project-folder/
-├── rx320.ini         (your settings — edit this)
-├── main.py           (this program)
-├── rx320.py            (QMX CAT communication)
-├── dxcluster.py      (DX Cluster network client)
-
+├── rx320.ini          (your settings — edit this)
+├── main.py            (main application)
+├── rx320.py           (RX320 communication class)
+├── dxcluster.py       (DX Cluster network client)
+└── rx320.png          (Ten-Tec logo)
 ```
+
