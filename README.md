@@ -3,6 +3,8 @@
 
 ---
 
+<img src="images/rx320_setup.jpeg" width="600">
+
 ## 1. Introduction
 
 The **RX320 Control Program** is a Python/Tkinter desktop application for controlling the **Ten-Tec RX320** receiver.
@@ -141,6 +143,8 @@ Each command must be placed on a separate line.
 
 
 ## 4. The Main Window
+
+<img src="images/rx320_controller_screen.jpeg" width="600">
 
 The window title bar shows the program version and the connected **RX320 receiver**.
 
